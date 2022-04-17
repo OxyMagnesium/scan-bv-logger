@@ -1,6 +1,7 @@
 from math import sin, pi
 from pathlib import Path
 from random import random
+from time import perf_counter
 
 import pandas as pd
 import matplotlib.dates as mdates
@@ -12,8 +13,8 @@ TESTFILE_PATH = "testlog.csv"
 def generate_test_data():
     # Make the date index of the test data
     test_datetime = pd.date_range(
-        "2022-04-15 13:05:53",
-        "2022-04-18 16:32:45",
+        "2022-04-13 13:05:53",
+        "2022-04-17 16:32:45",
         freq = 'T',  # minute
     )
     
@@ -70,6 +71,7 @@ def gen_daily_plots(data: pd.DataFrame, dir_path: str):
         plt.gcf().axes[0].xaxis.set_major_formatter(fmt)
         plt.ylabel("Voltage (V)")
         plt.xlabel("Time")
+        plt.ylim([10, 15])
         plt.title(date)
         plt.grid()
 
@@ -100,5 +102,7 @@ def gen_daily_plots(data: pd.DataFrame, dir_path: str):
 
 
 if __name__ == "__main__":
+    start = perf_counter()
     generate_test_data()
     gen_daily_plots(load_data(TESTFILE_PATH), "data/test/daily")
+    print(f"Test files generated in {(perf_counter() - start)*1e3:.3f} ms")
