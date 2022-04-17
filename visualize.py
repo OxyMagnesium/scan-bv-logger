@@ -85,20 +85,41 @@ def gen_daily_plots(data: pd.DataFrame, dir_path: str):
             .to_numpy().astype(pd.Timestamp)
         )
 
-        # Add this data to cumulative figure
-        plt.figure("cumulative")
+        # Add this data to hourly figure
+        plt.figure("hourly")
         plt.plot(df["Voltage"]) 
 
-    # Generate the cumulative plot
-    plt.figure("cumulative")
-    fmt = mdates.DateFormatter('%H:%M')
+    # Generate the hourly plot
+    plt.figure("hourly")
+    fmt = mdates.DateFormatter("%H:%M")
     plt.gcf().axes[0].xaxis.set_major_formatter(fmt)
     plt.title(f"{days[0][0].date()} to {days[-1][0].date()}")
     plt.ylabel("Voltage (V)")
     plt.xlabel("Time")
     plt.grid()
 
-    plt.savefig(Path(dir_path)/f"cumulative.png")
+    # Add legend for hourly plot
+    # REMOVE THIS IF THERE'S MANY DAYS OF DATA
+    plt.gcf().legend([str(date.date()) for date, df in days])
+
+    # Save hourly plot
+    plt.savefig(Path(dir_path)/f"hourly.png")
+
+
+def gen_full_plot(data: pd.DataFrame, dir_path: str):
+    # Create directory path if it doesn't already exist
+    Path(dir_path).mkdir(parents = True, exist_ok = True)
+
+    # Start making plot
+    plt.plot(data["Voltage"])
+    plt.gcf().autofmt_xdate()
+    plt.ylabel("Voltage (V)")
+    plt.xlabel("Date/time")
+    plt.title("All Days")
+    plt.ylim([10, 15])
+    plt.grid()
+
+    plt.savefig(Path(dir_path)/f"full.png")
 
 
 if __name__ == "__main__":
